@@ -3,27 +3,22 @@
 export LC_ALL=C
 
 get_active_network_interface() {
-	readonly active_network_interface="${3}"
+	readonly active_network_interface=${3}
 }
 
 get_rx_bytes_and_tx_bytes() {
-	while read -r line; do
-		case ${line} in
-			*" ${active_network_interface}:"*)
-				read -r line
-				read -r line
-				read -r line
-				rx_bytes=${line%% *}
-				read -r line
-				read -r line
-				tx_bytes=${line%% *}
-				break
-			;;
-			*)
-			;;
-		esac
-	done <<-EOF
-	$(ip -s l)
+	{
+		read -r line
+		read -r line
+		read -r line
+		read -r line
+		rx_bytes=${line%% *}
+		read -r line
+		read -r line
+		tx_bytes=${line%% *}
+
+	} <<-EOF
+	$(ip -0 -s a show ${active_network_interface})
 	EOF
 }
 
@@ -31,7 +26,7 @@ line=$(ip r)
 get_active_network_interface ${line#*
 }
 
-[ -z "${active_network_interface}" ] && exec echo 'No active network interface was detected'
+[ -z ${active_network_interface} ] && exec echo 'No active network interface was detected'
 
 get_rx_bytes_and_tx_bytes
 
