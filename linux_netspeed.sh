@@ -28,7 +28,8 @@ get_rx_bytes_and_tx_bytes() {
 }
 
 line=$(ip r)
-get_active_network_interface ${line#*$'\n'}
+get_active_network_interface ${line#*
+}
 
 [ -z ${active_network_interface} ] && exec echo 'No active network interface was detected'
 
