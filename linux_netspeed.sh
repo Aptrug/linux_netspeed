@@ -27,12 +27,8 @@ get_rx_bytes_and_tx_bytes() {
 	EOF
 }
 
-while read -r line; do
-	previous_line=${line}
-done <<EOF
-$(ip r)
-EOF
-get_active_network_interface ${previous_line}
+line=$(ip r)
+get_active_network_interface ${line#*$'\n'}
 
 [ -z ${active_network_interface} ] && exec echo 'No active network interface was detected'
 
