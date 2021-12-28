@@ -3,7 +3,7 @@
 export LC_ALL=C
 
 get_active_network_interface() {
-	active_network_interface=${3}
+	readonly active_network_interface=${3}
 }
 
 get_rx_bytes_and_tx_bytes() {
