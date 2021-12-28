@@ -16,7 +16,6 @@ get_rx_bytes_and_tx_bytes() {
 		read -r line
 		read -r line
 		tx_bytes=${line%% *}
-
 	} <<-EOF
 	$(ip -0 -s a s ${active_network_interface})
 	EOF
@@ -33,8 +32,8 @@ get_rx_bytes_and_tx_bytes
 previous_rx_bytes=${rx_bytes}
 previous_tx_bytes=${tx_bytes}
 
-trap 'keep_going=false' INT
 keep_going=true
+trap 'keep_going=false' INT
 
 while ${keep_going}; do
 	sleep 1
@@ -49,3 +48,4 @@ while ${keep_going}; do
 	previous_tx_bytes=${tx_bytes}
 done
 echo
+# vim:noet
