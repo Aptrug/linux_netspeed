@@ -22,10 +22,11 @@ get_rx_bytes_and_tx_bytes() {
 }
 
 line=$(ip r)
+# Get the last line of the output of `ip r`
 get_active_network_interface ${line#*
 }
 
-[ -z ${active_network_interface} ] && exec echo 'No active network interface was detected'
+[ -z ${active_network_interface} ] && exec echo 'No active network interface was detected.'
 
 get_rx_bytes_and_tx_bytes
 
