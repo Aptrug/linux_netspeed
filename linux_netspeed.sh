@@ -18,7 +18,7 @@ get_rx_bytes_and_tx_bytes() {
 		tx_bytes=${line%% *}
 
 	} <<-EOF
-	$(ip -0 -s a show ${active_network_interface})
+	$(ip -0 -s a s ${active_network_interface})
 	EOF
 }
 
