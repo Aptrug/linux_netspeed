@@ -3,7 +3,7 @@
 export LC_ALL=C
 
 get_active_network_interface() {
-	readonly active_network_interface=${3}
+	readonly active_network_interface="${3}"
 }
 
 get_rx_bytes_and_tx_bytes() {
@@ -31,7 +31,7 @@ line=$(ip r)
 get_active_network_interface ${line#*
 }
 
-[ -z ${active_network_interface} ] && exec echo 'No active network interface was detected'
+[ -z "${active_network_interface}" ] && exec echo 'No active network interface was detected'
 
 get_rx_bytes_and_tx_bytes
 
