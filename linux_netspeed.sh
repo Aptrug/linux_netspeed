@@ -36,17 +36,34 @@ previous_tx_bytes=${tx_bytes}
 keep_going=true
 trap 'keep_going=false' INT
 
-while ${keep_going}; do
-	sleep 1
+if [ -t 0 ]; then
+	# Interactive
+	while ${keep_going}; do
+		sleep 1
 
-	get_rx_bytes_and_tx_bytes
+		get_rx_bytes_and_tx_bytes
 
-	printf '\r\033[0KDOWN: %d KB/s | UP: %d KB/s'\
-		$(((rx_bytes-previous_rx_bytes)>>10))\
-		$(((tx_bytes-previous_tx_bytes)>>10))
+		printf '\r\033[0KDOWN: %d KB/s | UP: %d KB/s'\
+			$(((rx_bytes-previous_rx_bytes)>>10))\
+			$(((tx_bytes-previous_tx_bytes)>>10))
 
-	previous_rx_bytes=${rx_bytes}
-	previous_tx_bytes=${tx_bytes}
-done
+		previous_rx_bytes=${rx_bytes}
+		previous_tx_bytes=${tx_bytes}
+	done
+else
+	# Scripted
+	while ${keep_going}; do
+		sleep 1
+
+		get_rx_bytes_and_tx_bytes
+
+		printf 'DOWN: %d KB/s | UP: %d KB/s\n'\
+			$(((rx_bytes-previous_rx_bytes)>>10))\
+			$(((tx_bytes-previous_tx_bytes)>>10))
+
+		previous_rx_bytes=${rx_bytes}
+		previous_tx_bytes=${tx_bytes}
+	done
+fi
 echo
 # vim:noet
