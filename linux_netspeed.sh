@@ -1,13 +1,32 @@
-#!/bin/sh
+#!/bin/sh -eu
 
 export LC_ALL=C
 
+readonly newline_character='
+'
+
 get_active_network_interface() {
-	readonly active_network_interface=${3}
+	local ip_output
+	local ip_output_last_line
+	while true; do
+		ip_output=$(ip r)
+		if [ -n "${ip_output}" ]; then
+			ip_output_last_line=${ip_output##*${newline_character}}
+			set -- ${ip_output_last_line}
+			active_network_interface=${3}
+			break
+		else
+			previous_rx_bytes=0
+			sleep 1
+		fi
+	done
+
 }
 
 get_rx_bytes_and_tx_bytes() {
+	get_active_network_interface
 	{
+		local line
 		read -r line
 		read -r line
 		read -r line
@@ -19,23 +38,18 @@ get_rx_bytes_and_tx_bytes() {
 	} <<-EOF
 	$(ip -0 -s a s ${active_network_interface})
 	EOF
+	if [ ${previous_rx_bytes} -eq 0 ]; then
+		previous_rx_bytes=${rx_bytes}
+		previous_tx_bytes=${tx_bytes}
+	fi
 }
 
-line=$(ip r)
-# Get the last line of the output of `ip r`
-get_active_network_interface ${line##*
-}
-
-[ -z ${active_network_interface} ] && exec echo 'No active network interface was detected.'
+previous_rx_bytes=0
 
 get_rx_bytes_and_tx_bytes
 
-previous_rx_bytes=${rx_bytes}
-previous_tx_bytes=${tx_bytes}
-
 keep_going=true
 trap 'keep_going=false' INT
-
 if [ -t 0 ]; then
 	# Interactive
 	while ${keep_going}; do
