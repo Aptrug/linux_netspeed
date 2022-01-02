@@ -5,6 +5,8 @@ export LC_ALL=C
 readonly newline_character='
 '
 
+trap 'exec echo' INT
+
 get_active_network_interface() {
 	local ip_output
 	local ip_output_last_line
@@ -20,7 +22,6 @@ get_active_network_interface() {
 			sleep 1
 		fi
 	done
-
 }
 
 get_rx_bytes_and_tx_bytes() {
@@ -45,14 +46,11 @@ get_rx_bytes_and_tx_bytes() {
 }
 
 previous_rx_bytes=0
-
 get_rx_bytes_and_tx_bytes
 
-keep_going=true
-trap 'keep_going=false' INT
 if [ -t 0 ]; then
 	# Interactive
-	while ${keep_going}; do
+	while true; do
 		sleep 1
 
 		get_rx_bytes_and_tx_bytes
@@ -66,7 +64,7 @@ if [ -t 0 ]; then
 	done
 else
 	# Scripted
-	while ${keep_going}; do
+	while true; do
 		sleep 1
 
 		get_rx_bytes_and_tx_bytes
@@ -79,5 +77,4 @@ else
 		previous_tx_bytes=${tx_bytes}
 	done
 fi
-echo
 # vim:noet
