@@ -2,9 +2,6 @@
 
 export LC_ALL=C
 
-readonly newline_character='
-'
-
 trap 'exec echo' INT
 
 get_active_network_interface() {
@@ -13,7 +10,7 @@ get_active_network_interface() {
 	while true; do
 		ip_output=$(ip r)
 		if [ -n "${ip_output}" ]; then
-			ip_output_last_line=${ip_output##*${newline_character}}
+			ip_output_last_line=${ip_output##*$'\n'}
 			set -- ${ip_output_last_line}
 			active_network_interface=${3}
 			break
