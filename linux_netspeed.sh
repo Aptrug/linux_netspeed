@@ -47,31 +47,22 @@ get_rx_bytes_and_tx_bytes
 
 if [ -t 0 ]; then
 	# Interactive
-	while true; do
-		sleep 1
-
-		get_rx_bytes_and_tx_bytes
-
-		printf '\r\033[0KDOWN: %d KB/s | UP: %d KB/s'\
-			$(((rx_bytes-previous_rx_bytes)>>10))\
-			$(((tx_bytes-previous_tx_bytes)>>10))
-
-		previous_rx_bytes=${rx_bytes}
-		previous_tx_bytes=${tx_bytes}
-	done
+	readonly printf_format_string='\r\033[0KDOWN: %d KB/s | UP: %d KB/s'
 else
 	# Scripted
-	while true; do
-		sleep 1
-
-		get_rx_bytes_and_tx_bytes
-
-		printf 'DOWN: %d KB/s | UP: %d KB/s\n'\
-			$(((rx_bytes-previous_rx_bytes)>>10))\
-			$(((tx_bytes-previous_tx_bytes)>>10))
-
-		previous_rx_bytes=${rx_bytes}
-		previous_tx_bytes=${tx_bytes}
-	done
+	readonly printf_format_string='DOWN: %d KB/s | UP: %d KB/s\n'
 fi
+
+while true; do
+	sleep 1
+
+	get_rx_bytes_and_tx_bytes
+
+	printf "${printf_format_string}"\
+		$(((rx_bytes-previous_rx_bytes)>>10))\
+		$(((tx_bytes-previous_tx_bytes)>>10))
+
+	previous_rx_bytes=${rx_bytes}
+	previous_tx_bytes=${tx_bytes}
+done
 # vim:noet
